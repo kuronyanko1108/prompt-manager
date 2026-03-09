@@ -11,10 +11,10 @@ erDiagram
     }
 
     prompt_tag_map {
-        INTEGER prompt_id FK
-        INTEGER tag_id FK
-        TEXT created_at
-        TEXT updated_at
+        INTEGER prompt_id PK,FK
+        INTEGER tag_id PK,FK
+        TEXT created_at  
+        TEXT updated_at  
     }
 
     prompt_tags {
@@ -30,5 +30,6 @@ erDiagram
     style prompt_tags fill:#fff4e1
 ```
 ### 補足事項
-- 論理削除サイン（delete_at） は、0が有効、1が論理削除済み
+- 論理削除サイン（is_delete） は、0が有効、1が論理削除済み
 - **prompt_tag_map** と **prompt_tags** はフェーズ２以降の機能で追加予定
+- tag_name は実装時に**ユニーク制約**にすること
