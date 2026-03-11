@@ -3,36 +3,53 @@
 classDiagram
     class PromptListView{
         show_list()
-        open_prompt_edit_view() 
-        open_prompt_new_create_view()
-        copy_prompt()
+        on_copy_clicked()
     }
+
     class PromptNewCreateView{
-        save_prompt()
-        back_to_prompt_list_view()
+        on_save_clicked()
     }
+
     class PromptEditView{
-        save_prompt()
-        copy_prompt()
-        delete_prompt()
-        back_to_prompt_list_view()
+        on_save_clicked()
+        on_copy_clicked()
+        on_delete_clicked()
+        show_snackbar()
+        show_error()
     }
+
+    class PromptController{
+        open_prompt_list_view()
+        open_prompt_new_create_view()
+        open_prompt_edit_view()
+        save_prompt(dto)
+        copy_prompt(id)
+        delete_prompt(id)
+    }
+
+
     class IPromptService{
         get_all_prompt()
         get_prompt_by_id(id)
-        create_prompt(DTO: PromptDTO)
-        update_prompt(DTO: PromptDTO)
+        create_prompt(dto)
+        update_prompt(dto)
         delete_prompt(id)
     }
 
     class PromptService{
         get_all_prompt()
         get_prompt_by_id(id)
-        create_prompt(DTO: PromptDTO)
-        update_prompt(DTO: PromptDTO)
+        create_prompt(dto)
+        update_prompt(dto)
         delete_prompt(id)
     }
 
+        class PromptDTOMapper{
+            to_dto(entity)
+            to_entity(dto)
+            to_dto_list(entities)
+        
+    }
         class PromptDTO{
         <<dataclass>>
         id
@@ -58,7 +75,7 @@ classDiagram
         delete(id)
     }
 
-    class PromptMapper{
+    class PromptEntityMapper{
         to_entity(row)
         to_entity_list(rows)
     }
@@ -84,19 +101,28 @@ classDiagram
 
 
 
-    PromptListView --> IPromptService
-    PromptEditView --> IPromptService
-    PromptNewCreateView --> IPromptService
+    PromptListView --> PromptController
+    PromptEditView --> PromptController
+    PromptNewCreateView --> PromptController
+    
+    PromptController --> IPromptService
     IPromptService <|.. PromptService : implements
-    PromptService ..> PromptDTO
-    PromptService --> Prompt
+    PromptService ..> PromptDTOMapper
+
+    PromptDTOMapper ..> PromptDTO
+    PromptDTOMapper ..> Prompt
+    
+    
     PromptService --> IPromptRepository
+    
     IPromptRepository <|.. SQLitePromptRepository : implements
-    SQLitePromptRepository --> PromptMapper
-    SQLitePromptRepository --> Prompt
-    PromptMapper ..> Prompt : create
+
+    SQLitePromptRepository --> PromptEntityMapper
+    SQLitePromptRepository ..> Prompt
     SQLitePromptRepository --> Database
+    
+    PromptEntityMapper ..> Prompt : create
+    
 
     
 ```
-
