@@ -20,16 +20,16 @@ classDiagram
     class IPromptService{
         get_all_prompt()
         get_prompt_by_id(id)
-        create_prompt(title,content)
-        update_prompt(id,title,content)
+        create_prompt(DTO: PromptDTO)
+        update_prompt(DTO: PromptDTO)
         delete_prompt(id)
     }
 
     class PromptService{
         get_all_prompt()
         get_prompt_by_id(id)
-        create_prompt(title,content)
-        update_prompt(id,title,content)
+        create_prompt(DTO: PromptDTO)
+        update_prompt(DTO: PromptDTO)
         delete_prompt(id)
     }
 
@@ -59,8 +59,8 @@ classDiagram
     }
 
     class PromptMapper{
-        to_model(row)
-        to_model_list(rows)
+        to_entity(row)
+        to_entity_list(rows)
     }
 
 
@@ -88,11 +88,13 @@ classDiagram
     PromptEditView --> IPromptService
     PromptNewCreateView --> IPromptService
     IPromptService <|.. PromptService : implements
-    PromptService ..> PromptDTO : Creates
+    PromptService ..> PromptDTO
+    PromptService --> Prompt
     PromptService --> IPromptRepository
     IPromptRepository <|.. SQLitePromptRepository : implements
     SQLitePromptRepository --> PromptMapper
-    PromptMapper ..> Prompt : Creates
+    SQLitePromptRepository --> Prompt
+    PromptMapper ..> Prompt : create
     SQLitePromptRepository --> Database
 
     
