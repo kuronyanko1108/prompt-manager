@@ -17,6 +17,14 @@ classDiagram
         delete_prompt()
         back_to_prompt_list_view()
     }
+    class IPromptService{
+        get_all_prompt()
+        get_prompt_by_id(id)
+        create_prompt(title,content)
+        update_prompt(id,title,content)
+        delete_prompt(id)
+    }
+
     class PromptService{
         get_all_prompt()
         get_prompt_by_id(id)
@@ -24,7 +32,25 @@ classDiagram
         update_prompt(id,title,content)
         delete_prompt(id)
     }
-    class PromptRepository{
+
+        class PromptDTO{
+        <<dataclass>>
+        id
+        title
+        content
+    }
+
+    class IPromptRepository{
+        <<interface>>
+        find_all()
+        find_by_id(id)
+        create(prompt)
+        update(prompt)
+        delete(id)
+    }
+
+
+    class SQLitePromptRepository{
         find_all()
         find_by_id(id)
         create(prompt)
@@ -39,6 +65,7 @@ classDiagram
 
 
     class Prompt{
+         <<Entity>>
         id
         title
         content
@@ -55,17 +82,19 @@ classDiagram
         close()
     }
 
-    class SQLite{
 
-    }
 
-    PromptListView --> PromptService
-    PromptEditView --> PromptService
-    PromptNewCreateView --> PromptService
-    PromptService --> PromptRepository
-    PromptRepository --> PromptMapper
-    PromptMapper --> Prompt
-    PromptRepository --> Database
-    Database --> SQLite
+    PromptListView --> IPromptService
+    PromptEditView --> IPromptService
+    PromptNewCreateView --> IPromptService
+    IPromptService <|.. PromptService : implements
+    PromptService ..> PromptDTO : Creates
+    PromptService --> IPromptRepository
+    IPromptRepository <|.. SQLitePromptRepository : implements
+    SQLitePromptRepository --> PromptMapper
+    PromptMapper ..> Prompt : Creates
+    SQLitePromptRepository --> Database
+
     
 ```
+
