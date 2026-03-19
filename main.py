@@ -61,7 +61,9 @@ def main(page: ft.Page):
                     ft.Row(
                         controls=[
                             PromptButton.back_to_screen_btn(
-                                lambda _: page.go("/prompt_list")
+                                lambda e: prompt_create_view.on_back_clicked(
+                                    title_input, content_input, e
+                                )
                             ),
                         ]
                     ),
@@ -93,7 +95,9 @@ def main(page: ft.Page):
                     ft.Row(
                         controls=[
                             PromptButton.back_to_screen_btn(
-                                lambda _: page.go("/prompt_list")
+                                lambda e: page.data.on_back_clicked(
+                                    title_input, content_input, e
+                                )
                             ),
                             PromptButton.delete_prompt_btn(
                                 lambda e: page.data.on_delete_clicked(e)

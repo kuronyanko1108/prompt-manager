@@ -18,7 +18,7 @@ class PromptButton:
         """編集画面ボタン"""
         return ft.IconButton(
             icon=ft.icons.EDIT,
-            icon_color=Color.REGULAR_ICON_COLOR,
+            icon_color=Color.NAV_ICON_COLOR,
             tooltip="編集へ",
             on_click=go_edit,
         )
@@ -58,7 +58,7 @@ class PromptButton:
     def back_to_screen_btn(go_back):
         """戻るボタン"""
         return ft.IconButton(
-            icon_color=Color.DEFAULT_ICON_COLOR,
+            icon_color=Color.NAV_ICON_COLOR,
             icon=ft.icons.ARROW_BACK,
             tooltip="一覧へ戻る",
             on_click=go_back,

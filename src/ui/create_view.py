@@ -1,6 +1,7 @@
 from ..controllers.prompt_controller import PromptController
 from ..dto.prompt_dto import PromptCreateDTO
 from ..constants.result_code import ResultCode
+from ..ui.components.prompt_confirm_UI import PromptConfirmUI
 import flet as ft
 
 
@@ -25,8 +26,17 @@ class PromptCreateView:
             self.snack_bar("保存しました。", e)
             e.page.go("/prompt_list")
 
-    def on_back_clicked(self):
-        pass
+    def on_back_clicked(self, title_input, content_input, e):
+
+        if title_input.value or content_input.value:
+            PromptConfirmUI.show_confirm_dialog(
+                e,
+                "記入されています",
+                "保存せずに戻りますか？",
+                on_yes_action=lambda e: e.page.go("/prompt_list"),
+            )
+        else:
+            e.page.go("/prompt_list")
 
     def snack_bar(self, comment, e):
         # 1. SnackBarのインスタンスを作る

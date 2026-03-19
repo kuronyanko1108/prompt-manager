@@ -23,7 +23,7 @@ class PromptInput:
             value=content_value,
             label="Content",
             hint_text="Content Please!!",
-            max_length=1000,
+            max_length=10000,
             # 複数行
             multiline=True,
             # 最小行数
