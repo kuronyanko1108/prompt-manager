@@ -46,6 +46,10 @@ class PromptService:
         if errors:
             return VALIDATION_ERROR, errors
 
+        if self.repository.find_by_id(prompt_dto.id) is None:
+            errors = ["指定されたデータが存在しません"]
+            return VALIDATION_ERROR, errors
+
         prompt = PromptDTOMapper.update_dto_to_entity(prompt_dto)
         return self.repository.update(prompt), errors
 

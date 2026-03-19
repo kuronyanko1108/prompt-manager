@@ -116,10 +116,10 @@ def test_update_prompt():
     service.repository = fake_repo
     prompt_dto = PromptUpdateDTO(title="E更新", content="E本文更新", id=5)
 
-    result, massage = service.update_prompt(prompt_dto)
+    result, message = service.update_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
     assert result == 1
-    assert not massage
+    assert not message
     # 確認： id/title/content正しくわたり 更新されていること
     assert fake_repo.last_updated_prompt is not None
     assert fake_repo.last_updated_prompt.id == 5
@@ -173,17 +173,17 @@ def test_update_prompt_validation_error_returns_zero_and_skips_repository():
     assert fake_repo.update_call_count == 0
 
 
-def test_update_prompt_repository_error_returns_zero():
+def test_update_prompt_not_found_returns_validation_error():
 
     service = PromptService()
     fake_repo = FakeRepository()
     service.repository = fake_repo
     prompt_dto = PromptUpdateDTO(title="X更新", content="X本文更新", id=4)
 
-    result, massage = service.update_prompt(prompt_dto)
+    result, message = service.update_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
-    assert result == 0
-    assert not massage
+    assert result == -1
+    assert message[0] == "指定されたデータが存在しません"
 
 
 def test_create_prompt_repository_error_returns_zero():
