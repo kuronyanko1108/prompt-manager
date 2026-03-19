@@ -1,10 +1,7 @@
 from ..controllers.prompt_controller import PromptController
 from ..dto.prompt_dto import PromptCreateDTO
+from ..constants.result_code import ResultCode
 import flet as ft
-
-VALIDATION_ERROR = -1
-ERROR = 0
-SUCCESS = 1
 
 
 class PromptCreateView:
@@ -18,11 +15,13 @@ class PromptCreateView:
         )
         result, errors = self.controller.save_prompt(prompt_dto)
 
-        if result == VALIDATION_ERROR:
+        if result == ResultCode.VALIDATION_ERROR:
             self.snack_bar(errors[0], e)
-        elif result == ERROR:
+
+        elif result == ResultCode.ERROR:
             self.snack_bar("保存に失敗しました", e)
-        elif result == SUCCESS:
+
+        elif result == ResultCode.SUCCESS:
             self.snack_bar("保存しました。", e)
             e.page.go("/prompt_list")
 

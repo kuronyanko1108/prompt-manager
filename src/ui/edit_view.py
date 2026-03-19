@@ -1,10 +1,7 @@
 from ..controllers.prompt_controller import PromptController
 from ..dto.prompt_dto import PromptUpdateDTO
+from ..constants.result_code import ResultCode
 import flet as ft
-
-VALIDATION_ERROR = -1
-ERROR = 0
-SUCCESS = 1
 
 
 class PromptEditView:
@@ -21,11 +18,13 @@ class PromptEditView:
         )
         result, errors = self.controller.save_prompt(prompt_dto)
 
-        if result == VALIDATION_ERROR:
+        if result == ResultCode.VALIDATION_ERROR:
             self.snack_bar(errors[0], e)
-        elif result == ERROR:
+
+        elif result == ResultCode.ERROR:
             self.snack_bar("保存に失敗しました", e)
-        elif result == SUCCESS:
+
+        elif result == ResultCode.SUCCESS:
             self.snack_bar("保存しました。", e)
 
     def on_copy_clicked(self):
@@ -34,11 +33,12 @@ class PromptEditView:
     def on_delete_clicked(self, e):
         result = self.controller.delete_prompt(self.prompt_id)
 
-        if result == 1:
+        if result == ResultCode.ERROR:
+            self.snack_bar("削除に失敗しました", e)
+
+        elif result == ResultCode.SUCCESS:
             self.snack_bar("削除しました", e)
             e.page.go("/prompt_list")
-        else:
-            self.snack_bar("削除に失敗しました", e)
 
     def on_back_clicked(self):
         pass

@@ -6,6 +6,7 @@ from src.dto.prompt_dto import (
     PromptUpdateDTO,
     PromptCreateDTO,
 )
+from src.constants.result_code import ResultCode
 
 
 class FakeRepository:
@@ -103,7 +104,7 @@ def test_create_prompt():
 
     result, message = service.create_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
-    assert result == 1
+    assert result == ResultCode.SUCCESS
     assert not message
     assert fake_repo.last_created_prompt.id is None
     assert fake_repo.last_created_prompt.title == "D"
@@ -118,7 +119,7 @@ def test_update_prompt():
 
     result, message = service.update_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
-    assert result == 1
+    assert result == ResultCode.SUCCESS
     assert not message
     # 確認： id/title/content正しくわたり 更新されていること
     assert fake_repo.last_updated_prompt is not None
@@ -134,7 +135,7 @@ def test_delete_prompt():
     result = service.delete_prompt(prompt_id)
 
     # 確認： 戻り値をそのまま返す
-    assert result == 1
+    assert result == ResultCode.SUCCESS
 
 
 def test_abnormal_delete_prompt():
@@ -144,7 +145,7 @@ def test_abnormal_delete_prompt():
     result = service.delete_prompt(prompt_id)
 
     # 確認： 戻り値をそのまま返す
-    assert result == 0
+    assert result == ResultCode.ERROR
 
 
 def test_create_prompt_validation_error_returns_zero_and_skips_repository():
@@ -155,7 +156,7 @@ def test_create_prompt_validation_error_returns_zero_and_skips_repository():
 
     result, message = service.create_prompt(prompt_dto)
 
-    assert result == -1
+    assert result == ResultCode.VALIDATION_ERROR
     assert fake_repo.create_call_count == 0
     assert message[0] == "タイトルは必須です"
 
@@ -168,7 +169,7 @@ def test_update_prompt_validation_error_returns_zero_and_skips_repository():
 
     result, message = service.update_prompt(prompt_dto)
 
-    assert result == -1
+    assert result == ResultCode.VALIDATION_ERROR
     assert message[0] == "IDは1以上である必要があります"
     assert fake_repo.update_call_count == 0
 
@@ -182,7 +183,7 @@ def test_update_prompt_not_found_returns_validation_error():
 
     result, message = service.update_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
-    assert result == -1
+    assert result == ResultCode.VALIDATION_ERROR
     assert message[0] == "指定されたデータが存在しません"
 
 
@@ -194,5 +195,5 @@ def test_create_prompt_repository_error_returns_zero():
 
     result, message = service.create_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
-    assert result == 0
+    assert result == ResultCode.ERROR
     assert not message
