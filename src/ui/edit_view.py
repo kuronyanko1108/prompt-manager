@@ -2,6 +2,10 @@ from ..controllers.prompt_controller import PromptController
 from ..dto.prompt_dto import PromptUpdateDTO
 import flet as ft
 
+VALIDATION_ERROR = -1
+ERROR = 0
+SUCCESS = 1
+
 
 class PromptEditView:
     def __init__(self, prompt_id: int):
@@ -15,12 +19,14 @@ class PromptEditView:
             title=input_title.value,
             content=input_content.value,
         )
-        result = self.controller.save_prompt(prompt_dto)
+        result, errors = self.controller.save_prompt(prompt_dto)
 
-        if result == 1:
-            self.snack_bar("保存しました", e)
-        else:
+        if result == VALIDATION_ERROR:
+            self.snack_bar(errors[0], e)
+        elif result == ERROR:
             self.snack_bar("保存に失敗しました", e)
+        elif result == SUCCESS:
+            self.snack_bar("保存しました。", e)
 
     def on_copy_clicked(self):
         pass

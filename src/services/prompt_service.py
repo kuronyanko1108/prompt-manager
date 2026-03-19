@@ -6,11 +6,15 @@ from ..dto.prompt_dto import (
     PromptCreateDTO,
     PromptUpdateDTO,
 )
+from ..validation.prompt_validator import PromptValidator
+
+VALIDATION_ERROR = -1
 
 
 class PromptService:
     def __init__(self):
         self.repository = SQLitePromptRepository()
+        self.validator = PromptValidator()
 
     def get_all_prompt(self) -> list[PromptSummaryDTO]:
         """プロンプトを一括取得"""
@@ -22,15 +26,28 @@ class PromptService:
         prompt = self.repository.find_by_id(prompt_id)
         return PromptDTOMapper.entity_to_detail_dto(prompt)
 
-    def create_prompt(self, prompt_dto: PromptCreateDTO) -> int:
+    def create_prompt(self, prompt_dto: PromptCreateDTO) -> tuple[int, list[str]]:
         """プロンプトの新規で登録"""
-        prompt = PromptDTOMapper.create_dto_to_entity(prompt_dto)
-        return self.repository.create(prompt)
 
-    def update_prompt(self, prompt_dto: PromptUpdateDTO) -> int:
+        # バリデーションチェック
+        errors = self.validator.validate_create(prompt_dto.title, prompt_dto.content)
+        if errors:
+            return VALIDATION_ERROR, errors
+
+        prompt = PromptDTOMapper.create_dto_to_entity(prompt_dto)
+        return self.repository.create(prompt), errors
+
+    def update_prompt(self, prompt_dto: PromptUpdateDTO) -> tuple[int, list[str]]:
         """プロンプトの変更内容を更新"""
+        # バリデーションチェック
+        errors = self.validator.validate_update(
+            prompt_dto.id, prompt_dto.title, prompt_dto.content
+        )
+        if errors:
+            return VALIDATION_ERROR, errors
+
         prompt = PromptDTOMapper.update_dto_to_entity(prompt_dto)
-        return self.repository.update(prompt)
+        return self.repository.update(prompt), errors
 
     def delete_prompt(self, prompt_id: int) -> int:
         """プロンプトを削除"""

@@ -19,7 +19,9 @@ class PromptController:
         """idに紐づくプロンプトを取得する"""
         return self.service.get_prompt_by_id(prompt_id)
 
-    def save_prompt(self, prompt_dto: PromptCreateDTO | PromptUpdateDTO) -> int:
+    def save_prompt(
+        self, prompt_dto: PromptCreateDTO | PromptUpdateDTO
+    ) -> tuple[int, list[str]]:
         """プロンプトの新規登録／更新処理を行う"""
 
         # 引数の型に応じて新規登録か更新処理を決める

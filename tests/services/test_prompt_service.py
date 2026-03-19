@@ -12,6 +12,8 @@ class FakeRepository:
     def __init__(self):
         self.last_created_prompt = None
         self.last_updated_prompt = None
+        self.create_call_count = 0
+        self.update_call_count = 0
 
     def find_all(self):
         return [
@@ -30,6 +32,7 @@ class FakeRepository:
         )
 
     def create(self, prompt):
+        self.create_call_count += 1
         if prompt.title == "D" and prompt.content == "D本文":
             self.last_created_prompt = prompt
             return 1
@@ -37,6 +40,7 @@ class FakeRepository:
             return 0
 
     def update(self, prompt):
+        self.update_call_count += 1
         if prompt.title == "E更新" and prompt.content == "E本文更新":
             self.last_updated_prompt = prompt
             return 1
@@ -97,9 +101,10 @@ def test_create_prompt():
     service.repository = fake_repo
     prompt_dto = PromptCreateDTO(title="D", content="D本文")
 
-    result = service.create_prompt(prompt_dto)
+    result, message = service.create_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
     assert result == 1
+    assert not message
     assert fake_repo.last_created_prompt.id is None
     assert fake_repo.last_created_prompt.title == "D"
     assert fake_repo.last_created_prompt.content == "D本文"
@@ -111,9 +116,10 @@ def test_update_prompt():
     service.repository = fake_repo
     prompt_dto = PromptUpdateDTO(title="E更新", content="E本文更新", id=5)
 
-    result = service.update_prompt(prompt_dto)
+    result, massage = service.update_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
     assert result == 1
+    assert not massage
     # 確認： id/title/content正しくわたり 更新されていること
     assert fake_repo.last_updated_prompt is not None
     assert fake_repo.last_updated_prompt.id == 5
@@ -139,3 +145,54 @@ def test_abnormal_delete_prompt():
 
     # 確認： 戻り値をそのまま返す
     assert result == 0
+
+
+def test_create_prompt_validation_error_returns_zero_and_skips_repository():
+    service = PromptService()
+    fake_repo = FakeRepository()
+    service.repository = fake_repo
+    prompt_dto = PromptCreateDTO(title="   ", content="本文")
+
+    result, message = service.create_prompt(prompt_dto)
+
+    assert result == -1
+    assert fake_repo.create_call_count == 0
+    assert message[0] == "タイトルは必須です"
+
+
+def test_update_prompt_validation_error_returns_zero_and_skips_repository():
+    service = PromptService()
+    fake_repo = FakeRepository()
+    service.repository = fake_repo
+    prompt_dto = PromptUpdateDTO(title="更新", content="本文", id=0)
+
+    result, message = service.update_prompt(prompt_dto)
+
+    assert result == -1
+    assert message[0] == "IDは1以上である必要があります"
+    assert fake_repo.update_call_count == 0
+
+
+def test_update_prompt_repository_error_returns_zero():
+
+    service = PromptService()
+    fake_repo = FakeRepository()
+    service.repository = fake_repo
+    prompt_dto = PromptUpdateDTO(title="X更新", content="X本文更新", id=4)
+
+    result, massage = service.update_prompt(prompt_dto)
+    # 確認： 戻り値をそのまま返す
+    assert result == 0
+    assert not massage
+
+
+def test_create_prompt_repository_error_returns_zero():
+    service = PromptService()
+    fake_repo = FakeRepository()
+    service.repository = fake_repo
+    prompt_dto = PromptCreateDTO(title="x", content="x本文")
+
+    result, message = service.create_prompt(prompt_dto)
+    # 確認： 戻り値をそのまま返す
+    assert result == 0
+    assert not message
