@@ -2,7 +2,7 @@ from ..controllers.prompt_controller import PromptController
 from ..dto.prompt_dto import PromptCreateDTO
 from ..constants.result_code import ResultCode
 from ..ui.components.prompt_confirm_UI import PromptConfirmUI
-import flet as ft
+from ..ui.components.prompt_snack_bar_UI import PromptSnackBarUI
 
 
 class PromptCreateView:
@@ -17,36 +17,23 @@ class PromptCreateView:
         result, errors = self.controller.save_prompt(prompt_dto)
 
         if result == ResultCode.VALIDATION_ERROR:
-            self.snack_bar(errors[0], e)
+            PromptSnackBarUI.show_snack_bar(e.page, errors[0])
 
         elif result == ResultCode.ERROR:
-            self.snack_bar("保存に失敗しました", e)
+            PromptSnackBarUI.show_snack_bar(e.page, "保存に失敗しました")
 
         elif result == ResultCode.SUCCESS:
-            self.snack_bar("保存しました。", e)
+            PromptSnackBarUI.show_snack_bar(e.page, "保存しました。")
             e.page.go("/prompt_list")
 
     def on_back_clicked(self, title_input, content_input, e):
 
         if title_input.value or content_input.value:
             PromptConfirmUI.show_confirm_dialog(
-                e,
-                "記入されています",
-                "保存せずに戻りますか？",
-                on_yes_action=lambda e: e.page.go("/prompt_list"),
+                e.page,
+                "確認",
+                "記入されています。\n保存せずに戻りますか？",
+                on_yes_action=lambda page: page.go("/prompt_list"),
             )
         else:
             e.page.go("/prompt_list")
-
-    def snack_bar(self, comment, e):
-        # 1. SnackBarのインスタンスを作る
-        snack_bar = ft.SnackBar(
-            content=ft.Text(comment),
-            duration=2000,
-        )
-        # 2. 現在のページ(e.page)の属性にセットする
-        e.page.snack_bar = snack_bar
-        # 3. オープンフラグを立てる
-        e.page.snack_bar.open = True
-        # 4. ページを更新して反映させる
-        e.page.update()

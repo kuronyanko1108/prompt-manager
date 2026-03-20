@@ -3,26 +3,28 @@ import flet as ft
 
 class PromptConfirmUI:
     @staticmethod
-    def show_confirm_dialog(e, dialog_title, dialog_content, on_yes_action):
+    def show_confirm_dialog(
+        current_page: ft.Page, dialog_title: str, dialog_content: str, on_yes_action
+    ):
         # ダイアログを閉じるための補助関数
-        def close_dlg(is_yes, e):
+        def close_dlg(is_yes):
             modal_dialog.open = False
-            e.page.update()
+            current_page.update()
             if is_yes:
-                on_yes_action(e)
+                on_yes_action(current_page)
 
         modal_dialog = ft.AlertDialog(
             modal=False,
             title=ft.Text(dialog_title),
             content=ft.Text(dialog_content),
             actions=[
-                ft.TextButton("Yes", on_click=lambda e: close_dlg(True, e)),
-                ft.TextButton("No", on_click=lambda e: close_dlg(False, e)),
+                ft.TextButton("Yes", on_click=lambda _: close_dlg(True)),
+                ft.TextButton("No", on_click=lambda _: close_dlg(False)),
             ],
             # アクションの水平方向のレイアウト
             actions_alignment=ft.MainAxisAlignment.END,
         )
 
-        e.page.dialog = modal_dialog  # ダイアログをページにセット
+        current_page.dialog = modal_dialog  # ダイアログをページにセット
         modal_dialog.open = True  # ダイアログを開く
-        e.page.update()
+        current_page.update()

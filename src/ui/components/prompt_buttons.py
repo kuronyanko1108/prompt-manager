@@ -33,14 +33,14 @@ class PromptButton:
         )
 
     @staticmethod
-    def copy_prompt_btn(on_save):
+    def copy_prompt_btn(on_copy):
         """コピーボタン"""
         return ft.IconButton(
             icon_color=Color.DEFAULT_ICON_COLOR,
             icon_size=IconSize.LITTLE_ICON_SIZE,
             icon=ft.icons.CONTENT_COPY,
             tooltip="コピーする",
-            on_click=on_save,
+            on_click=on_copy,
         )
 
     @staticmethod
@@ -55,7 +55,7 @@ class PromptButton:
         )
 
     @staticmethod
-    def back_to_screen_btn(go_back):
+    def back_to_list_view_btn(go_back):
         """戻るボタン"""
         return ft.IconButton(
             icon_color=Color.NAV_ICON_COLOR,
