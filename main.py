@@ -1,11 +1,5 @@
 import flet as ft
-from src.ui.components.prompt_buttons import PromptButton
-from src.ui.components.prompt_input import PromptInput
-from src.ui.list_view import PromptListView
-from src.ui.create_view import PromptCreateView
-from src.ui.edit_view import PromptEditView
 from src.ui.page_factory import PageFactory
-from functools import partial
 
 
 def main(page: ft.Page):

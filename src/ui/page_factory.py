@@ -28,7 +28,7 @@ class PageFactory:
                     color=ft.colors.BLUE_400,
                 ),
                 ft.Divider(height=10),
-                # プロンプト一覧リストの作成
+                # プロンプト一覧リストの作成処理
                 self.build_list_view(),
                 # 新規作成ボタン
                 PromptButton.create_prompt_btn(lambda _: current_page.go("/create")),
@@ -73,7 +73,6 @@ class PageFactory:
 
     def edit_view_screen(self):
         """編集画面画面"""
-
         return ft.View(
             "/edit",
             [
@@ -153,7 +152,10 @@ class PageFactory:
     def handle_edit(self, prompt, e):
         # 関数の外部でもインスタンスを使えるように一時保管場所（age.data）にインスタンスを生成
         e.page.data = PromptEditView(prompt.id)
+
+        # 一覧リストで選択したプロンプトのidに紐づくタイトル、本文を入力欄に設定する
         row = self.prompt_list_view.open_edit_view(prompt.id)
         self.title_input.value = row.title
         self.content_input.value = row.content
+
         e.page.go("/edit")
