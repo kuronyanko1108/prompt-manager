@@ -25,6 +25,6 @@ class PromptConfirmUI:
             actions_alignment=ft.MainAxisAlignment.END,
         )
 
-        current_page.dialog = modal_dialog  # ダイアログをページにセット
+        current_page.overlay.append(modal_dialog)  # ダイアログをページにセット
         modal_dialog.open = True  # ダイアログを開く
         current_page.update()

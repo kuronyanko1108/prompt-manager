@@ -6,6 +6,7 @@ class PromptSummaryDTO:
     """一覧表示用DTO"""
 
     title: str
+    content: str
     id: int
 
 

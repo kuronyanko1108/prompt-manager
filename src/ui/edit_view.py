@@ -3,6 +3,8 @@ from ..dto.prompt_dto import PromptUpdateDTO
 from ..constants.result_code import ResultCode
 from ..ui.components.prompt_confirm_UI import PromptConfirmUI
 from ..ui.components.prompt_snack_bar_UI import PromptSnackBarUI
+import asyncio
+import flet as ft
 
 
 class PromptEditView:
@@ -20,19 +22,19 @@ class PromptEditView:
         result, errors = self.controller.save_prompt(prompt_dto)
 
         if result == ResultCode.VALIDATION_ERROR:
-            PromptSnackBarUI.show_snack_bar(e.page, errors[0])
+            PromptSnackBarUI.error_snack_bar(e.page, errors[0])
 
         elif result == ResultCode.ERROR:
-            PromptSnackBarUI.show_snack_bar(e.page, "保存に失敗しました")
+            PromptSnackBarUI.error_snack_bar(e.page, "保存に失敗しました")
 
         elif result == ResultCode.SUCCESS:
-            PromptSnackBarUI.show_snack_bar(e.page, "保存しました。")
+            PromptSnackBarUI.success_snack_bar(e.page, "保存しました")
 
     def on_copy_clicked(self, content_input, e):
         # クリップボードにコピー
-        e.page.set_clipboard(content_input.value)
+        asyncio.create_task(ft.Clipboard().set(content_input.value))
         # コピー完了をユーザーに知らせる（スナックバー）
-        PromptSnackBarUI.show_snack_bar(e.page, "プロンプトをコピーしました！")
+        PromptSnackBarUI.success_snack_bar(e.page, "プロンプトをコピーしました")
 
     def on_delete_clicked(self, e):
         PromptConfirmUI.show_confirm_dialog(
@@ -47,18 +49,18 @@ class PromptEditView:
         result = self.controller.delete_prompt(self.prompt_id)
 
         if result == ResultCode.ERROR:
-            PromptSnackBarUI.show_snack_bar(current_page, "削除に失敗しました")
+            PromptSnackBarUI.error_snack_bar(current_page, "削除に失敗しました")
 
         elif result == ResultCode.SUCCESS:
-            PromptSnackBarUI.show_snack_bar(current_page, "削除しました")
-            current_page.go("/prompt_list")
+            PromptSnackBarUI.success_snack_bar(current_page, "削除しました")
+            asyncio.create_task(current_page.push_route("/"))
 
     def on_back_clicked(self, title_input, content_input, e):
         prompt_data = self.controller.get_prompt_by_id(self.prompt_id)
 
         if prompt_data is None:
-            PromptSnackBarUI.show_snack_bar(e.page, "変更対象がありません")
-            e.page.go("/prompt_list")
+            PromptSnackBarUI.error_snack_bar(e.page, "変更対象がありません")
+            asyncio.create_task(e.page.push_route("/"))
             return
 
         # 変更がある場合は、確認ダイアログを表示する
@@ -69,7 +71,7 @@ class PromptEditView:
                 e.page,
                 "確認",
                 "内容が変更されています。\n内容を保存せずに戻りますか？",
-                on_yes_action=lambda page: page.go("/prompt_list"),
+                on_yes_action=lambda page: asyncio.create_task(page.push_route("/")),
             )
         else:
-            e.page.go("/prompt_list")
+            asyncio.create_task(e.page.push_route("/"))

@@ -35,6 +35,7 @@ class PromptDTOMapper:
         return PromptSummaryDTO(
             id=entity.id,
             title=entity.title,
+            content=entity.content,
         )
 
     @staticmethod

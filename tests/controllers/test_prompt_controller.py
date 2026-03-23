@@ -13,7 +13,10 @@ class FakeService:
         self.update_called = False
 
     def get_all_prompt(self):
-        return [PromptSummaryDTO(id=1, title="A"), PromptSummaryDTO(id=2, title="B")]
+        return [
+            PromptSummaryDTO(id=1, title="A", content="AAA"),
+            PromptSummaryDTO(id=2, title="B", content="BBB"),
+        ]
 
     def get_prompt_by_id(self, prompt_id):
         if prompt_id == 999:
@@ -48,8 +51,10 @@ def test_get_prompt_list():
     assert isinstance(result[0], PromptSummaryDTO)
     assert result[0].id == 1
     assert result[0].title == "A"
+    assert result[0].content == "AAA"
     assert result[1].id == 2
     assert result[1].title == "B"
+    assert result[1].content == "BBB"
 
 
 def test_get_prompt_by_id():
