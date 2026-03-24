@@ -9,27 +9,14 @@ def main(page: ft.Page):
     def route_change():
         page.views.clear()
         if page.route == "/":
-            view = prompt_factory.prompt_list_screen(page)
+            page.views.append(prompt_factory.prompt_list_screen(page))
+            prompt_factory.create_drawer(page)
 
         elif page.route == "/create":
-            view = prompt_factory.create_view_screen()
+            page.views.append(prompt_factory.create_view_screen())
 
         elif page.route == "/edit":
-            view = prompt_factory.edit_view_screen()
-
-        # page.views.append(
-        #     ft.View(
-        #         route="/",
-        #         controls=[
-        #             ft.AppBar(
-        #                 title=ft.Text("Flet app"),
-        #             ),
-        #         ],
-        #     )
-        # )
-
-        page.views.append(view)
-        # page.update()
+            page.views.append(prompt_factory.edit_view_screen())
 
     # ページ構成
     page.title = "Prompt Manager"

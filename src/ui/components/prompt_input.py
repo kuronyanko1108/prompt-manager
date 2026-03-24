@@ -29,9 +29,9 @@ class PromptInput:
             # 複数行
             multiline=True,
             # 最小行数
-            min_lines=10,
+            min_lines=15,
             # 高さ
-            height=300,
+            height=400,
             # フォントサイズ
             text_size=16,
             # シフトキーとエンターキーの有効
@@ -40,4 +40,5 @@ class PromptInput:
             border_color=Color.INPUT_BOX_COLOR,
             # 入力欄を選択した時の色
             focused_border_color=Color.SELECT_COLOR,
+            expand=True,
         )

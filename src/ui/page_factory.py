@@ -23,6 +23,12 @@ class PageFactory:
     def prompt_list_screen(self, current_page: ft.Page) -> ft.View:
         """一覧表示画面"""
         top_bar = ft.AppBar(
+            leading=ft.IconButton(
+                icon=ft.Icons.MENU,
+                on_click=lambda _: asyncio.create_task(
+                    self.handle_show_drawer(current_page)
+                ),
+            ),
             title=ft.Text(
                 "Prompt Manager",
                 size=28,
@@ -44,8 +50,8 @@ class PageFactory:
         # プロンプト一覧画面はURLが呼ばれるたびにリストを再取得して画面生成を行う
         return ft.View(
             route="/",
+            appbar=top_bar,
             controls=[
-                top_bar,
                 # プロンプト一覧リストの作成処理
                 self.build_list_view(),
                 PromptButton.create_prompt_btn(
@@ -79,25 +85,33 @@ class PageFactory:
 
         return ft.View(
             route="/create",
+            appbar=ft.AppBar(
+                leading=PromptButton.back_to_list_view_btn(
+                    lambda e: self.prompt_create_view.on_back_clicked(
+                        self.title_input, self.content_input, e
+                    )
+                )
+            ),
             controls=[
-                ft.Row(
+                ft.ResponsiveRow(
                     controls=[
-                        PromptButton.back_to_list_view_btn(
-                            lambda e: self.prompt_create_view.on_back_clicked(
-                                self.title_input, self.content_input, e
-                            )
+                        self.title_input,
+                        ft.Divider(height=5),
+                        self.content_input,
+                        ft.Row(
+                            controls=[],
                         ),
                     ]
                 ),
-                self.title_input,
-                ft.Divider(height=5),
-                self.content_input,
-                ft.Divider(height=10),
-                ft.Row(
-                    controls=[create_save_button],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
             ],
+            bottom_appbar=ft.BottomAppBar(
+                ft.Row(
+                    controls=[
+                        create_save_button,
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                )
+            ),
         )
 
     def edit_view_screen(self):
@@ -122,33 +136,39 @@ class PageFactory:
 
         return ft.View(
             route="/edit",
+            appbar=ft.AppBar(
+                leading=PromptButton.back_to_list_view_btn(
+                    lambda e: e.page.data.on_back_clicked(
+                        self.title_input, self.content_input, e
+                    )
+                ),
+                actions=[],
+            ),
             controls=[
-                ft.Row(
+                ft.ResponsiveRow(
                     controls=[
-                        PromptButton.back_to_list_view_btn(
-                            lambda e: e.page.data.on_back_clicked(
-                                self.title_input, self.content_input, e
-                            )
-                        ),
-                        PromptButton.delete_prompt_btn(
-                            lambda e: e.page.data.on_delete_clicked(e)
-                        ),
+                        self.title_input,
+                        ft.Divider(height=5),
+                        self.content_input,
+                        ft.Divider(height=10),
                     ]
                 ),
-                self.title_input,
-                ft.Divider(height=5),
-                self.content_input,
-                ft.Divider(height=10),
+                ft.Row(),
+            ],
+            bottom_appbar=ft.BottomAppBar(
                 ft.Row(
                     controls=[
                         PromptButton.copy_prompt_btn(
                             lambda e: e.page.data.on_copy_clicked(self.content_input, e)
                         ),
                         edit_save_button,
+                        PromptButton.delete_prompt_btn(
+                            lambda e: e.page.data.on_delete_clicked(e)
+                        ),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
-                ),
-            ],
+                )
+            ),
         )
 
     def build_list_view(self):
@@ -282,6 +302,41 @@ class PageFactory:
         # 最大文字数を超える場合は末尾に…を追加する
         return normalized[: max_length - 1] + "…"
 
-    # def _open_drawer(self, e, current_page):
-    #     e.page.drawer.open = True
-    #     e.page.drawer.update()
+    def create_drawer(self, current_page: ft.Page):
+        """一覧表示画面の引き出しメニュー（NavigationDrawer）を作成し、ページに設定する。
+
+        Args:
+            current_page (ft.Page): ドロワーを設置する対象のページオブジェクト。
+        """
+        current_page.drawer = ft.NavigationDrawer(
+            on_change=lambda e: asyncio.create_task(
+                self.handle_drawer(e, current_page)
+            ),
+            controls=[
+                ft.Container(height=12),
+                ft.NavigationDrawerDestination(
+                    label="新規作成する",
+                    icon=ft.Icons.ADD_CIRCLE_OUTLINE_OUTLINED,
+                ),
+            ],
+        )
+
+    async def handle_show_drawer(self, page: ft.Page):
+        await page.show_drawer()
+
+    async def handle_drawer(self, e: ft.Event[ft.NavigationDrawer], page: ft.Page):
+        """引き出しメニュー内の項目選択後にページ遷移を制御する。
+
+        Args:
+            e (ft.Event[ft.NavigationDrawer]):ドロワーの選択変更イベント。
+            page (ft.Page): 遷移操作を行う対象のページ。
+        """
+        # 1. ドロワーを閉じる
+        await page.close_drawer()
+
+        # 2. 選択されたインデックスを取得
+        idx = e.control.selected_index
+
+        # 3. インデックスの処理に応じてページ遷移する
+        if idx == 0:
+            asyncio.create_task(page.push_route("/create"))
