@@ -1,4 +1,5 @@
 import flet as ft
+from .prompt_buttons import PromptButton
 
 
 class PromptConfirmUI:
@@ -18,8 +19,8 @@ class PromptConfirmUI:
             title=ft.Text(dialog_title),
             content=ft.Text(dialog_content),
             actions=[
-                ft.TextButton("Yes", on_click=lambda _: close_dlg(True)),
-                ft.TextButton("No", on_click=lambda _: close_dlg(False)),
+                PromptButton.dialog_confirm_btn("はい", lambda _: close_dlg(True)),
+                PromptButton.dialog_confirm_btn("いいえ", lambda _: close_dlg(False)),
             ],
             # アクションの水平方向のレイアウト
             actions_alignment=ft.MainAxisAlignment.END,

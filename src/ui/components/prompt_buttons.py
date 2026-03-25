@@ -60,6 +60,31 @@ class PromptButton:
         return ft.IconButton(
             icon_color=Color.NAV_ICON_COLOR,
             icon=ft.Icons.ARROW_BACK,
+            icon_size=IconSize.DEFAULT_ICON_SIZE,
             tooltip="一覧へ戻る",
             on_click=go_back,
         )
+
+    @staticmethod
+    def search_btn():
+        """検索ボタン"""
+        return ft.IconButton(
+            icon=ft.Icons.SEARCH,
+            icon_size=IconSize.DEFAULT_ICON_SIZE,
+            tooltip="フェーズ2に開放",
+            disabled=True,
+        )
+
+    @staticmethod
+    def menu_btn(on_menu_click):
+        """メニューボタン"""
+        return ft.IconButton(
+            icon=ft.Icons.MENU,
+            icon_size=IconSize.DEFAULT_ICON_SIZE,
+            on_click=on_menu_click,
+        )
+
+    @staticmethod
+    def dialog_confirm_btn(message, on_confirm_click):
+        """ダイアログ確認選択ボタン"""
+        return ft.TextButton(content=message, on_click=on_confirm_click)

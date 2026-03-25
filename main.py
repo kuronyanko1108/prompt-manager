@@ -1,6 +1,5 @@
 import flet as ft
 from src.ui.page_factory import PageFactory
-import asyncio
 
 
 def main(page: ft.Page):
@@ -8,15 +7,11 @@ def main(page: ft.Page):
 
     def route_change():
         page.views.clear()
+
+        view = prompt_factory.get_view(page)
+        page.views.append(view)
         if page.route == "/":
-            page.views.append(prompt_factory.prompt_list_screen(page))
-            prompt_factory.create_drawer(page)
-
-        elif page.route == "/create":
-            page.views.append(prompt_factory.create_view_screen())
-
-        elif page.route == "/edit":
-            page.views.append(prompt_factory.edit_view_screen())
+            prompt_factory.set_drawer(page)
 
     # ページ構成
     page.title = "Prompt Manager"

@@ -1,5 +1,5 @@
 import flet as ft
-from .theme import Color
+from .theme import Color, FontSize, CharLimit
 
 
 class PromptInput:
@@ -10,7 +10,7 @@ class PromptInput:
             label="タイトル",
             hint_text="タイトルを記入してください",
             # 最大文字数
-            max_length=100,
+            max_length=CharLimit.TITLE_MAX_LENGTH,
             color=Color.INPUT_BOX_COLOR,
             border_color=Color.INPUT_BOX_COLOR,
             focused_border_color=Color.SELECT_COLOR,
@@ -25,15 +25,15 @@ class PromptInput:
             value=content_value or "",
             label="本文",
             hint_text="本文を入力してください",
-            max_length=10000,
+            max_length=CharLimit.SUBTITLE_MAX_LENGTH,
             # 複数行
             multiline=True,
             # 最小行数
-            min_lines=15,
+            min_lines=CharLimit.INPUT_CONTENT_MIN_LINE,
             # 高さ
-            height=400,
+            height=CharLimit.INPUT_CONTENT_HEIGHT,
             # フォントサイズ
-            text_size=16,
+            text_size=FontSize.INPUT_TEXT_FONT_SIZE,
             # シフトキーとエンターキーの有効
             shift_enter=True,
             # 入力を選択していない時の色

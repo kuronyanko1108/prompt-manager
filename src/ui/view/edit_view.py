@@ -1,8 +1,8 @@
-from ..controllers.prompt_controller import PromptController
-from ..dto.prompt_dto import PromptUpdateDTO
-from ..constants.result_code import ResultCode
-from ..ui.components.prompt_confirm_UI import PromptConfirmUI
-from ..ui.components.prompt_snack_bar_UI import PromptSnackBarUI
+from ...controllers.prompt_controller import PromptController
+from ...dto.prompt_dto import PromptUpdateDTO
+from ...constants.result_code import ResultCode
+from ..components.prompt_confirm_ui import PromptConfirmUI
+from ..components.prompt_snack_bar_ui import PromptSnackBarUi
 import asyncio
 import flet as ft
 
@@ -22,19 +22,19 @@ class PromptEditView:
         result, errors = self.controller.save_prompt(prompt_dto)
 
         if result == ResultCode.VALIDATION_ERROR:
-            PromptSnackBarUI.error_snack_bar(e.page, errors[0])
+            PromptSnackBarUi.show_error_snack_bar(e.page, errors[0])
 
         elif result == ResultCode.ERROR:
-            PromptSnackBarUI.error_snack_bar(e.page, "保存に失敗しました")
+            PromptSnackBarUi.show_error_snack_bar(e.page, "保存に失敗しました")
 
         elif result == ResultCode.SUCCESS:
-            PromptSnackBarUI.success_snack_bar(e.page, "保存しました")
+            PromptSnackBarUi.show_success_snack_bar(e.page, "保存しました")
 
     def on_copy_clicked(self, content_input, e):
         # クリップボードにコピー
         asyncio.create_task(ft.Clipboard().set(content_input.value))
         # コピー完了をユーザーに知らせる（スナックバー）
-        PromptSnackBarUI.success_snack_bar(e.page, "プロンプトをコピーしました")
+        PromptSnackBarUi.show_success_snack_bar(e.page, "プロンプトをコピーしました")
 
     def on_delete_clicked(self, e):
         PromptConfirmUI.show_confirm_dialog(
@@ -49,17 +49,17 @@ class PromptEditView:
         result = self.controller.delete_prompt(self.prompt_id)
 
         if result == ResultCode.ERROR:
-            PromptSnackBarUI.error_snack_bar(current_page, "削除に失敗しました")
+            PromptSnackBarUi.show_error_snack_bar(current_page, "削除に失敗しました")
 
         elif result == ResultCode.SUCCESS:
-            PromptSnackBarUI.success_snack_bar(current_page, "削除しました")
+            PromptSnackBarUi.show_success_snack_bar(current_page, "削除しました")
             asyncio.create_task(current_page.push_route("/"))
 
     def on_back_clicked(self, title_input, content_input, e):
         prompt_data = self.controller.get_prompt_by_id(self.prompt_id)
 
         if prompt_data is None:
-            PromptSnackBarUI.error_snack_bar(e.page, "変更対象がありません")
+            PromptSnackBarUi.show_error_snack_bar(e.page, "変更対象がありません")
             asyncio.create_task(e.page.push_route("/"))
             return
 

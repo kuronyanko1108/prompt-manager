@@ -1,8 +1,8 @@
-from ..controllers.prompt_controller import PromptController
-from ..dto.prompt_dto import PromptCreateDTO
-from ..constants.result_code import ResultCode
-from ..ui.components.prompt_confirm_UI import PromptConfirmUI
-from ..ui.components.prompt_snack_bar_UI import PromptSnackBarUI
+from ...controllers.prompt_controller import PromptController
+from ...dto.prompt_dto import PromptCreateDTO
+from ...constants.result_code import ResultCode
+from ..components.prompt_confirm_ui import PromptConfirmUI
+from ..components.prompt_snack_bar_ui import PromptSnackBarUi
 import asyncio
 
 
@@ -18,13 +18,13 @@ class PromptCreateView:
         result, errors = self.controller.save_prompt(prompt_dto)
 
         if result == ResultCode.VALIDATION_ERROR:
-            PromptSnackBarUI.error_snack_bar(e.page, errors[0])
+            PromptSnackBarUi.show_error_snack_bar(e.page, errors[0])
 
         elif result == ResultCode.ERROR:
-            PromptSnackBarUI.error_snack_bar(e.page, "保存に失敗しました")
+            PromptSnackBarUi.show_error_snack_bar(e.page, "保存に失敗しました")
 
         elif result == ResultCode.SUCCESS:
-            PromptSnackBarUI.success_snack_bar(e.page, "保存しました")
+            PromptSnackBarUi.show_success_snack_bar(e.page, "保存しました")
             asyncio.create_task(e.page.push_route("/"))
 
     def on_back_clicked(self, title_input, content_input, e):
