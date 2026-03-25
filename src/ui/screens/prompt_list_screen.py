@@ -50,7 +50,7 @@ class PromptListScreen(BasePromptScreen):
     def build_list_screen(self, current_page: ft.Page) -> ft.View:
         """一覧表示画面の構築"""
         self.page = current_page
-        # プロンプト一覧画面はURLが呼ばれるたびにリストを再取得して画面生成を行う
+        # 2. 一覧表示画面を構築する
         return self.create_view(route="/")
 
     def build_list_view(self):
