@@ -42,6 +42,9 @@ class PromptCreateScreen(BasePromptScreen):
                     self.title_input,
                     ft.Divider(height=LayoutSize.DIVIDER_SMALL),
                     self.content_input,
+                    ft.Row(
+                        controls=[],
+                    ),
                 ]
             ),
         ]
