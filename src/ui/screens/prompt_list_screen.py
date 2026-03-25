@@ -6,34 +6,52 @@ from ..view.list_view import PromptListView
 from ..components.prompt_app_bars import PromptAppBars
 from functools import partial
 import asyncio
+from .base_prompt_screen import BasePromptScreen
+from typing import Optional, Sequence
 
 
-class PromptListScreen:
+class PromptListScreen(BasePromptScreen):
+    """一覧表示画面を構築を行うクラス"""
+
     def __init__(self):
         self.prompt_list_view = PromptListView()
         self.title_input = PromptInput.title_input_box(None)
         self.content_input = PromptInput.content_input_box(None)
+        self.page: Optional[ft.Page] = None
 
         # 一覧リスト用
         self.container = None
         self.click_token = 0
 
-    def build_list_screen(self, current_page: ft.Page) -> ft.View:
-        """一覧表示画面"""
-        # プロンプト一覧画面はURLが呼ばれるたびにリストを再取得して画面生成を行う
-        return ft.View(
-            route="/",
-            appbar=PromptAppBars.list_appbar(
-                lambda _: asyncio.create_task(self.handle_show_drawer(current_page)),
-            ),
-            controls=[
+    def appbar(self) -> Optional[ft.AppBar]:
+        """トップバー（appbar）を構築"""
+        if self.page is not None:
+            return PromptAppBars.list_appbar(
+                lambda _: asyncio.create_task(self.handle_show_drawer(self.page)),
+            )
+        return None
+
+    def controls(self) -> Sequence[ft.Control]:
+        """コントロールを構築"""
+        if self.page is not None:
+            return [
                 # プロンプト一覧リストの作成処理
                 self.build_list_view(),
                 PromptButton.create_prompt_btn(
-                    lambda _: asyncio.create_task(current_page.push_route("/create"))
+                    lambda _: asyncio.create_task(self.page.push_route("/create"))
                 ),
-            ],
-        )
+            ]
+        return []
+
+    def bottom_appbar(self) -> Optional[ft.BottomAppBar]:
+        """フッターバー(bottom_appbar)を構築"""
+        return None
+
+    def build_list_screen(self, current_page: ft.Page) -> ft.View:
+        """一覧表示画面の構築"""
+        self.page = current_page
+        # プロンプト一覧画面はURLが呼ばれるたびにリストを再取得して画面生成を行う
+        return self.create_view(route="/")
 
     def build_list_view(self):
         """プロンプト一覧リスト生成"""

@@ -30,7 +30,6 @@ class PromptCreateView:
     def on_back_clicked(self, title_input, content_input, e):
 
         if title_input.value or content_input.value:
-            print("in")
             PromptConfirmUI.show_confirm_dialog(
                 e.page,
                 "確認",
