@@ -3,15 +3,14 @@ from src.ui.page_factory import PageFactory
 
 
 def main(page: ft.Page):
-    prompt_factory = PageFactory()
 
     def route_change():
         page.views.clear()
 
-        view = prompt_factory.get_view(page)
+        view = PageFactory.get_view(page)
         page.views.append(view)
         if page.route == "/":
-            prompt_factory.set_drawer(page)
+            PageFactory.set_drawer(page)
 
     # ページ構成
     page.title = "Prompt Manager"
