@@ -6,9 +6,19 @@ from .screens.prompt_drawer_screen import PromptDrawerScreen
 
 
 class PageFactory:
+    def __init__(
+        self,
+        list: PromptListScreen,
+        create: PromptCreateScreen,
+        edit: PromptEditScreen,
+        drawer: PromptDrawerScreen,
+    ):
+        self.list_screen = list
+        self.create_screen = create
+        self.edit_screen = edit
+        self.drawer_screen = drawer
 
-    @staticmethod
-    def get_view(current_page: ft.Page) -> ft.View:
+    def get_view(self, current_page: ft.Page) -> ft.View:
         """URL(route)に基づいて、対応するScreenクラスからViewを生成して返します。
 
         Args:
@@ -17,30 +27,26 @@ class PageFactory:
         Returns:
             ft.View: 構築されたFletのViewオブジェクト
         """
-        list_screen = PromptListScreen()
-        create_screen = PromptCreateScreen()
-        edit_screen = PromptEditScreen()
 
         if current_page.route == "/":
-            return list_screen.build_list_screen(current_page)
+            return self.list_screen.build_list_screen(current_page)
 
         elif current_page.route == "/create":
-            return create_screen.build_create_screen()
+            return self.create_screen.build_create_screen()
 
         elif current_page.route.startswith("/edit/"):
             try:
                 prompt_id = int(current_page.route.split("/")[-1])
             except (ValueError, IndexError):
                 # IDが不正な場合は一覧画面に戻すなどの処理
-                return list_screen.build_list_screen(current_page)
+                return self.list_screen.build_list_screen(current_page)
 
-            return edit_screen.build_edit_screen(prompt_id)
+            return self.edit_screen.build_edit_screen(prompt_id)
 
         # TODO  不正なroute用のエラーページを実装する
         # 現状は一時的に一覧画面へリダイレクト
-        return list_screen.build_list_screen(current_page)
+        return self.list_screen.build_list_screen(current_page)
 
-    @staticmethod
-    def set_drawer(page: ft.Page):
-        drawer_screen = PromptDrawerScreen()
+    def set_drawer(self, page: ft.Page):
+        drawer_screen = self.drawer_screen
         drawer_screen.build_drawer(page)

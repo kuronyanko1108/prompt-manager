@@ -15,8 +15,8 @@ from ..utils.ui_utils import UiUtils
 class PromptListScreen(BasePromptScreen):
     """一覧表示画面を構築を行うクラス"""
 
-    def __init__(self):
-        self.prompt_list_view = PromptListView()
+    def __init__(self, view: PromptListView):
+        self.prompt_list_view = view
         self.title_input = PromptInput.title_input_box(None)
         self.content_input = PromptInput.content_input_box(None)
         self.page: Optional[ft.Page] = None

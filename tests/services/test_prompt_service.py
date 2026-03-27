@@ -56,8 +56,7 @@ class FakeRepository:
 
 
 def test_get_all_prompt():
-    service = PromptService()
-    service.repository = FakeRepository()
+    service = PromptService(FakeRepository())
 
     result = service.get_all_prompt()
 
@@ -73,8 +72,8 @@ def test_get_all_prompt():
 
 
 def test_normal_get_prompt_by_id():
-    service = PromptService()
-    service.repository = FakeRepository()
+    service = PromptService(FakeRepository())
+
     prompt_id = 3
     result = service.get_prompt_by_id(prompt_id)
 
@@ -87,8 +86,8 @@ def test_normal_get_prompt_by_id():
 
 
 def test_abnormal_get_prompt_by_id():
-    service = PromptService()
-    service.repository = FakeRepository()
+    service = PromptService(FakeRepository())
+
     prompt_id = 4
     result = service.get_prompt_by_id(prompt_id)
 
@@ -97,24 +96,24 @@ def test_abnormal_get_prompt_by_id():
 
 
 def test_create_prompt():
-    service = PromptService()
     fake_repo = FakeRepository()
-    service.repository = fake_repo
-    prompt_dto = PromptCreateDTO(title="D", content="D本文")
+    service = PromptService(fake_repo)
 
+    prompt_dto = PromptCreateDTO(title="D", content="D本文")
     result, message = service.create_prompt(prompt_dto)
     # 確認： 戻り値をそのまま返す
     assert result == ResultCode.SUCCESS
     assert not message
+    # assert fake_rep.last_created_prompt.id is None
     assert fake_repo.last_created_prompt.id is None
     assert fake_repo.last_created_prompt.title == "D"
     assert fake_repo.last_created_prompt.content == "D本文"
 
 
 def test_update_prompt():
-    service = PromptService()
     fake_repo = FakeRepository()
-    service.repository = fake_repo
+    service = PromptService(fake_repo)
+
     prompt_dto = PromptUpdateDTO(title="E更新", content="E本文更新", id=5)
 
     result, message = service.update_prompt(prompt_dto)
@@ -129,8 +128,8 @@ def test_update_prompt():
 
 
 def test_delete_prompt():
-    service = PromptService()
-    service.repository = FakeRepository()
+    service = PromptService(FakeRepository())
+
     prompt_id = 5
     result = service.delete_prompt(prompt_id)
 
@@ -139,8 +138,8 @@ def test_delete_prompt():
 
 
 def test_abnormal_delete_prompt():
-    service = PromptService()
-    service.repository = FakeRepository()
+    service = PromptService(FakeRepository())
+
     prompt_id = 999
     result = service.delete_prompt(prompt_id)
 
@@ -149,9 +148,9 @@ def test_abnormal_delete_prompt():
 
 
 def test_create_prompt_validation_error_returns_zero_and_skips_repository():
-    service = PromptService()
     fake_repo = FakeRepository()
-    service.repository = fake_repo
+    service = PromptService(fake_repo)
+
     prompt_dto = PromptCreateDTO(title="   ", content="本文")
 
     result, message = service.create_prompt(prompt_dto)
@@ -162,9 +161,9 @@ def test_create_prompt_validation_error_returns_zero_and_skips_repository():
 
 
 def test_update_prompt_validation_error_returns_zero_and_skips_repository():
-    service = PromptService()
     fake_repo = FakeRepository()
-    service.repository = fake_repo
+    service = PromptService(fake_repo)
+
     prompt_dto = PromptUpdateDTO(title="更新", content="本文", id=0)
 
     result, message = service.update_prompt(prompt_dto)
@@ -176,9 +175,8 @@ def test_update_prompt_validation_error_returns_zero_and_skips_repository():
 
 def test_update_prompt_not_found_returns_validation_error():
 
-    service = PromptService()
-    fake_repo = FakeRepository()
-    service.repository = fake_repo
+    service = PromptService(FakeRepository())
+
     prompt_dto = PromptUpdateDTO(title="X更新", content="X本文更新", id=4)
 
     result, message = service.update_prompt(prompt_dto)
@@ -188,9 +186,8 @@ def test_update_prompt_not_found_returns_validation_error():
 
 
 def test_create_prompt_repository_error_returns_zero():
-    service = PromptService()
-    fake_repo = FakeRepository()
-    service.repository = fake_repo
+    service = PromptService(FakeRepository())
+
     prompt_dto = PromptCreateDTO(title="x", content="x本文")
 
     result, message = service.create_prompt(prompt_dto)

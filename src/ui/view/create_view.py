@@ -7,8 +7,8 @@ import asyncio
 
 
 class PromptCreateView:
-    def __init__(self):
-        self.controller = PromptController()
+    def __init__(self, controller: PromptController):
+        self.controller = controller
 
     def on_save_clicked(self, input_title, input_content, e):
         prompt_dto = PromptCreateDTO(

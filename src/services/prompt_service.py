@@ -1,5 +1,4 @@
 from ..mappers.prompt_mapper import PromptDTOMapper
-from ..repositories.sqlite_prompt_repository import SQLitePromptRepository
 from ..dto.prompt_dto import (
     PromptSummaryDTO,
     PromptDetailDTO,
@@ -8,11 +7,13 @@ from ..dto.prompt_dto import (
 )
 from ..validation.prompt_validator import PromptValidator
 from ..constants.result_code import ResultCode
+from ..interfaces.i_prompt_service import IPromptService
+from ..interfaces.i_prompt_repository import IPromptRepository
 
 
-class PromptService:
-    def __init__(self):
-        self.repository = SQLitePromptRepository()
+class PromptService(IPromptService):
+    def __init__(self, repository: IPromptRepository):
+        self.repository = repository
         self.validator = PromptValidator()
 
     def get_all_prompt(self) -> list[PromptSummaryDTO]:

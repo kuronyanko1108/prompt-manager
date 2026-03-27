@@ -8,9 +8,13 @@ import flet as ft
 
 
 class PromptEditView:
-    def __init__(self, prompt_id: int):
-        self.controller = PromptController()
+    def __init__(self, controller: PromptController, prompt_id: int):
+        self.controller = controller
         self.prompt_id = prompt_id
+
+    def set_prompt_id(self, prompt_id):
+        self.prompt_id = prompt_id
+        return self.controller.get_prompt_by_id(prompt_id)
 
     def on_save_clicked(self, input_title, input_content, e):
 

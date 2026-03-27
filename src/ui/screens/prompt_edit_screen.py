@@ -1,6 +1,5 @@
 import flet as ft
 from ..components.prompt_buttons import PromptButton
-from ..view.list_view import PromptListView
 from ..view.edit_view import PromptEditView
 from ..components.prompt_app_bars import PromptAppBars
 from .base_prompt_edit_screen import BasePromptEditScreen
@@ -10,10 +9,9 @@ from typing import Optional
 class PromptEditScreen(BasePromptEditScreen):
     """編集画面を構築を行うクラス"""
 
-    def __init__(self):
+    def __init__(self, edit_view: PromptEditView):
         super().__init__(self.on_save_clicked)
-        self.list_view = PromptListView()
-        self.edit_view: Optional[PromptEditView] = None
+        self.edit_view = edit_view
 
     def bottom_appbar(self) -> Optional[ft.BottomAppBar]:
         """フッターバー(bottom_appbar)を構築"""
@@ -28,8 +26,7 @@ class PromptEditScreen(BasePromptEditScreen):
     def build_edit_screen(self, prompt_id: int) -> ft.View:
         """編集画面画面の構築を行う"""
         # 1. idからタイトルと本文を取得し、入力欄に設定する
-        self.edit_view = PromptEditView(prompt_id)
-        row = self.list_view.open_edit_view(prompt_id)
+        row = self.edit_view.set_prompt_id(prompt_id)
         self.title_input.value = row.title
         self.content_input.value = row.content
 

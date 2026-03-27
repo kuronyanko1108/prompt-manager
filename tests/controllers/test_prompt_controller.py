@@ -42,8 +42,7 @@ class FakeService:
 
 
 def test_get_prompt_list():
-    controller = PromptController()
-    controller.service = FakeService()
+    controller = PromptController(FakeService())
 
     result = controller.get_prompt_list()
 
@@ -58,8 +57,7 @@ def test_get_prompt_list():
 
 
 def test_get_prompt_by_id():
-    controller = PromptController()
-    controller.service = FakeService()
+    controller = PromptController(FakeService())
 
     prompt_id = 3
     result = controller.get_prompt_by_id(prompt_id)
@@ -72,8 +70,7 @@ def test_get_prompt_by_id():
 
 
 def test_abnormal_get_prompt_by_id():
-    controller = PromptController()
-    controller.service = FakeService()
+    controller = PromptController(FakeService())
 
     prompt_id = 999
     result = controller.get_prompt_by_id(prompt_id)
@@ -83,35 +80,30 @@ def test_abnormal_get_prompt_by_id():
 
 
 def test_save_prompt_to_create_prompt():
-    controller = PromptController()
-    fake = FakeService()
-    controller.service = fake
+    controller = PromptController(FakeService())
 
     prompt_dto = PromptCreateDTO(title="D", content="D本文")
     result = controller.save_prompt(prompt_dto)
 
     # 検証： save_prompt()がcreate_prompt()を呼ぶこと
-    assert fake.create_called is True
-    assert fake.update_called is False
+    assert controller.service.create_called is True
+    assert controller.service.update_called is False
     assert result == 1
 
 
 def test_save_prompt_to_update_prompt():
-    controller = PromptController()
-    fake = FakeService()
-    controller.service = fake
+    controller = PromptController(FakeService())
     prompt_dto = PromptUpdateDTO(id=4, title="E", content="E本文")
     result = controller.save_prompt(prompt_dto)
 
     # 検証： save_prompt()がupdate_prompt()を呼ぶこと
-    assert fake.update_called is True
-    assert fake.create_called is False
+    assert controller.service.update_called is True
+    assert controller.service.create_called is False
     assert result == 1
 
 
 def test_delete_prompt():
-    controller = PromptController()
-    controller.service = FakeService()
+    controller = PromptController(FakeService())
 
     prompt_id = 6
     result = controller.delete_prompt(prompt_id)
@@ -121,8 +113,7 @@ def test_delete_prompt():
 
 
 def test_abnormal_delete_prompt():
-    controller = PromptController()
-    controller.service = FakeService()
+    controller = PromptController(FakeService())
 
     prompt_id = 999
     result = controller.delete_prompt(prompt_id)

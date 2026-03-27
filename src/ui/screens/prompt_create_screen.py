@@ -8,9 +8,9 @@ from typing import Optional
 class PromptCreateScreen(BasePromptEditScreen):
     """新規作成画面を構築を行うクラス"""
 
-    def __init__(self):
+    def __init__(self, view: PromptCreateView):
         super().__init__(self.on_save_clicked)
-        self.prompt_create_view = PromptCreateView()
+        self.prompt_create_view = view
 
     def bottom_appbar(self) -> Optional[ft.BottomAppBar]:
         """フッターバー(bottom_appbar)を構築"""

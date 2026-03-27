@@ -6,8 +6,8 @@ import flet as ft
 
 
 class PromptListView:
-    def __init__(self):
-        self.controller = PromptController()
+    def __init__(self, controller: PromptController):
+        self.controller = controller
 
     def show_list(self):
         return self.controller.get_prompt_list()

@@ -5,11 +5,12 @@ from ..dto.prompt_dto import (
     PromptCreateDTO,
     PromptUpdateDTO,
 )
+from ..interfaces.i_prompt_service import IPromptService
 
 
 class PromptController:
-    def __init__(self):
-        self.service = PromptService()
+    def __init__(self, service: IPromptService):
+        self.service = service
 
     def get_prompt_list(self) -> list[PromptSummaryDTO]:
         """サービス層からプロンプトの一覧を取得"""
